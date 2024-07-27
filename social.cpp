@@ -14,11 +14,11 @@ public:
     User(const string& n, const string& e) : name(n), email(e) {}
 
     void addFriend(const string& friendName) {
-        friends.push_back(friendName);
+        this->friends.push_back(friendName);
     }
 
     void displayProfile() {
-        cout << "Name: " << name << "\nEmail: " << email << "\nFriends: ";
+        cout << "Name: " << this->name << "\nEmail: " << this->email << "\nFriends: ";
         for (const auto& f : friends) {
             cout << f << " ";
         }
@@ -36,11 +36,11 @@ public:
     Post(const string& u, const string& c) : user(u), content(c), likes(0) {}
 
     void likePost() {
-        likes++;
+        this->likes++;
     }
 
     void displayPost() {
-        cout << "User: " << user << "\nContent: " << content << "\nLikes: " << likes << "\n";
+        cout << "User: " << this->user << "\nContent: " << this->content << "\nLikes: " << this->likes << "\n";
     }
 };
 
@@ -54,11 +54,11 @@ public:
     Message(const string& s, const string& r, const string& c) : sender(s), receiver(r), content(c) {}
 
     void displayMessage() {
-        cout << "From: " << sender << "\nTo: " << receiver << "\nMessage: " << content << "\n";
+        cout << "From: " << this->sender << "\nTo: " << this->receiver << "\nMessage: " << this->content << "\n";
     }
     
     void editMessage(const string& newContent) {
-        content = newContent;
+        this->content = newContent;
     }
 };
 
