@@ -63,17 +63,20 @@ public:
 };
 
 int main() {
-    // Create users
-    User user1("Alice", "alice@example.com");
-    User user2("Bob", "bob@example.com");
+    // Create an array of User objects
+    vector<User> users = {
+        User("Alice", "alice@example.com"),
+        User("Bob", "bob@example.com")
+    };
 
     // Add friends
-    user1.addFriend("Bob");
-    user2.addFriend("Alice");
+    users[0].addFriend("Bob");
+    users[1].addFriend("Alice");
 
     // Display profiles
-    user1.displayProfile();
-    user2.displayProfile();
+    for (auto& user : users) {
+        user.displayProfile();
+    }
 
     // Create a post
     Post post1("Alice", "Hello, world!");
