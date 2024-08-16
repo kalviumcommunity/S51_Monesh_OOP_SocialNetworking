@@ -63,35 +63,42 @@ public:
 };
 
 int main() {
-    // Create an array of User objects
-    vector<User> users = {
-        User("Alice", "alice@example.com"),
-        User("Bob", "bob@example.com")
+    // Create an array of User objects using dynamic memory allocation
+    vector<User*> users = {
+        new User("Alice", "alice@example.com"),
+        new User("Bob", "bob@example.com")
     };
 
     // Add friends
-    users[0].addFriend("Bob");
-    users[1].addFriend("Alice");
+    users[0]->addFriend("Bob");
+    users[1]->addFriend("Alice");
 
     // Display profiles
-    for (auto& user : users) {
-        user.displayProfile();
+    for (auto user : users) {
+        user->displayProfile();
     }
 
-    // Create a post
-    Post post1("Alice", "Hello, world!");
-    post1.likePost();
+    // Create a post using dynamic memory allocation
+    Post* post1 = new Post("Alice", "Hello, world!");
+    post1->likePost();
 
     // Display post
-    post1.displayPost();
+    post1->displayPost();
 
-    // Send a message
-    Message msg1("Alice", "Bob", "Hi Bob!");
-    msg1.displayMessage();
+    // Send a message using dynamic memory allocation
+    Message* msg1 = new Message("Alice", "Bob", "Hi Bob!");
+    msg1->displayMessage();
 
     // Edit and display the message
-    msg1.editMessage("Hello Bob!");
-    msg1.displayMessage();
+    msg1->editMessage("Hello Bob!");
+    msg1->displayMessage();
+
+    // Cleanup: delete dynamically allocated objects
+    for (auto user : users) {
+        delete user;
+    }
+    delete post1;
+    delete msg1;
 
     return 0;
 }
