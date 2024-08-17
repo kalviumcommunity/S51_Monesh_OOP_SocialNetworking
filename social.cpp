@@ -10,8 +10,17 @@ private:
     string email;
     vector<string> friends;
 
+    // Static variable to keep track of the total number of users
+    static int userCount;
+
 public:
-    User(const string& n, const string& e) : name(n), email(e) {}
+    User(const string& n, const string& e) : name(n), email(e) {
+        userCount++; // Increment the user count when a new user is created
+    }
+
+    ~User() {
+        userCount--; // Decrement the user count when a user is deleted
+    }
 
     void addFriend(const string& friendName) {
         this->friends.push_back(friendName);
@@ -24,7 +33,15 @@ public:
         }
         cout << "\n";
     }
+
+    // Static method to get the total number of users
+    static int getUserCount() {
+        return userCount;
+    }
 };
+
+// Initialize static variable
+int User::userCount = 0;
 
 class Post {
 private:
@@ -32,8 +49,17 @@ private:
     string content;
     int likes;
 
+    // Static variable to track the total number of posts
+    static int postCount;
+
 public:
-    Post(const string& u, const string& c) : user(u), content(c), likes(0) {}
+    Post(const string& u, const string& c) : user(u), content(c), likes(0) {
+        postCount++; // Increment the post count when a new post is created
+    }
+
+    ~Post() {
+        postCount--; // Decrement the post count when a post is deleted
+    }
 
     void likePost() {
         this->likes++;
@@ -42,7 +68,15 @@ public:
     void displayPost() {
         cout << "User: " << this->user << "\nContent: " << this->content << "\nLikes: " << this->likes << "\n";
     }
+
+    // Static method to get the total number of posts
+    static int getPostCount() {
+        return postCount;
+    }
 };
+
+// Initialize static variable
+int Post::postCount = 0;
 
 class Message {
 private:
@@ -78,12 +112,18 @@ int main() {
         user->displayProfile();
     }
 
+    // Display the total number of users
+    cout << "Total Users: " << User::getUserCount() << "\n";
+
     // Create a post using dynamic memory allocation
     Post* post1 = new Post("Alice", "Hello, world!");
     post1->likePost();
 
     // Display post
     post1->displayPost();
+
+    // Display the total number of posts
+    cout << "Total Posts: " << Post::getPostCount() << "\n";
 
     // Send a message using dynamic memory allocation
     Message* msg1 = new Message("Alice", "Bob", "Hi Bob!");
@@ -99,6 +139,10 @@ int main() {
     }
     delete post1;
     delete msg1;
+
+    // After deletion, display the total number of users and posts again
+    cout << "Total Users after deletion: " << User::getUserCount() << "\n";
+    cout << "Total Posts after deletion: " << Post::getPostCount() << "\n";
 
     return 0;
 }
