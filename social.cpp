@@ -14,8 +14,14 @@ private:
     static int userCount;
 
 public:
+    // Default constructor
+    User() : name("Unknown"), email("unknown@example.com") {
+        userCount++;
+    }
+
+    // Parameterized constructor
     User(const string& n, const string& e) : name(n), email(e) {
-        userCount++; // Increment the user count when a new user is created
+        userCount++;
     }
 
     ~User() {
@@ -53,8 +59,14 @@ private:
     static int postCount;
 
 public:
+    // Default constructor
+    Post() : user("Anonymous"), content("No Content"), likes(0) {
+        postCount++;
+    }
+
+    // Parameterized constructor
     Post(const string& u, const string& c) : user(u), content(c), likes(0) {
-        postCount++; // Increment the post count when a new post is created
+        postCount++;
     }
 
     ~Post() {
@@ -85,6 +97,7 @@ private:
     string content;
 
 public:
+    // Parameterized constructor
     Message(const string& s, const string& r, const string& c) : sender(s), receiver(r), content(c) {}
 
     void displayMessage() {
@@ -97,10 +110,10 @@ public:
 };
 
 int main() {
-    // Create an array of User objects using dynamic memory allocation
+    // Create User objects using both default and parameterized constructors
     vector<User*> users = {
-        new User("Alice", "alice@example.com"),
-        new User("Bob", "bob@example.com")
+        new User(),                    // Default constructor
+        new User("Alice", "alice@example.com")  // Parameterized constructor
     };
 
     // Add friends
@@ -115,12 +128,14 @@ int main() {
     // Display the total number of users
     cout << "Total Users: " << User::getUserCount() << "\n";
 
-    // Create a post using dynamic memory allocation
-    Post* post1 = new Post("Alice", "Hello, world!");
-    post1->likePost();
+    // Create Post objects using both default and parameterized constructors
+    Post* post1 = new Post();                 // Default constructor
+    Post* post2 = new Post("Alice", "Hello, world!"); // Parameterized constructor
+    post2->likePost();
 
-    // Display post
+    // Display posts
     post1->displayPost();
+    post2->displayPost();
 
     // Display the total number of posts
     cout << "Total Posts: " << Post::getPostCount() << "\n";
@@ -138,6 +153,7 @@ int main() {
         delete user;
     }
     delete post1;
+    delete post2;
     delete msg1;
 
     // After deletion, display the total number of users and posts again
