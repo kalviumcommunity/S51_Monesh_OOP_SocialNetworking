@@ -32,12 +32,18 @@ public:
         this->friends.push_back(friendName);
     }
 
+    // Overloaded function to display profile
     void displayProfile() const {
         cout << "Name: " << this->name << "\nEmail: " << this->email << "\nFriends: ";
         for (const auto& f : friends) {
             cout << f << " ";
         }
         cout << "\n";
+    }
+
+    // Overloaded function with one argument to display specific friend details
+    void displayProfile(const string& friendName) const {
+        cout << "User: " << this->name << " has friend: " << friendName << "\n";
     }
 
     // Static method to get the total number of users
@@ -153,12 +159,15 @@ int main() {
 
     // Add friends
     users[0]->addFriend("Bob");
-    users[1]->addFriend("Alice");
+    users[1]->addFriend("Charlie");
 
     // Display profiles
     for (auto user : users) {
-        user->displayProfile();
+        user->displayProfile(); // Calls the regular displayProfile()
     }
+
+    // Using the overloaded displayProfile() function
+    users[1]->displayProfile("Charlie"); // Calls the overloaded displayProfile() with a friend name
 
     // Display the total number of users
     cout << "Total Users: " << User::getUserCount() << "\n";
