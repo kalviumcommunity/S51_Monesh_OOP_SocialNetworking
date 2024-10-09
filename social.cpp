@@ -32,7 +32,7 @@ public:
         this->friends.push_back(friendName);
     }
 
-    void displayProfile() {
+    void displayProfile() const {
         cout << "Name: " << this->name << "\nEmail: " << this->email << "\nFriends: ";
         for (const auto& f : friends) {
             cout << f << " ";
@@ -44,10 +44,31 @@ public:
     static int getUserCount() {
         return userCount;
     }
+
+    // Getter for name (used in AdminUser)
+    string getName() const {
+        return name;
+    }
 };
 
 // Initialize static variable
 int User::userCount = 0;
+
+// Single Inheritance: AdminUser class inherits from User class
+class AdminUser : public User {
+private:
+    string adminRole;
+
+public:
+    AdminUser(const string& n, const string& e, const string& role) : User(n, e), adminRole(role) {}
+
+    void displayAdminProfile() const {
+        // Call base class method to display the common user profile details
+        displayProfile();
+        // Add admin-specific details
+        cout << "Role: " << adminRole << "\n";
+    }
+};
 
 class Post {
 private:
@@ -77,7 +98,7 @@ public:
         this->likes++;
     }
 
-    void displayPost() {
+    void displayPost() const {
         cout << "User: " << this->user << "\nContent: " << this->content << "\nLikes: " << this->likes << "\n";
     }
 
@@ -100,12 +121,26 @@ public:
     // Parameterized constructor
     Message(const string& s, const string& r, const string& c) : sender(s), receiver(r), content(c) {}
 
-    void displayMessage() {
+    void displayMessage() const {
         cout << "From: " << this->sender << "\nTo: " << this->receiver << "\nMessage: " << this->content << "\n";
     }
     
     void editMessage(const string& newContent) {
         this->content = newContent;
+    }
+};
+
+// Multiple Inheritance: Comment class inherits from both Post and Message
+class Comment : public Post, public Message {
+public:
+    // Constructor to initialize both base classes
+    Comment(const string& u, const string& c, const string& s, const string& r, const string& m)
+        : Post(u, c), Message(s, r, m) {}
+
+    // Display details of both post and message
+    void displayComment() const {
+        displayPost();      // Call Post's display method
+        displayMessage();   // Call Message's display method
     }
 };
 
@@ -128,6 +163,10 @@ int main() {
     // Display the total number of users
     cout << "Total Users: " << User::getUserCount() << "\n";
 
+    // Create AdminUser
+    AdminUser* admin = new AdminUser("Charlie", "charlie@admin.com", "Super Admin");
+    admin->displayAdminProfile();
+
     // Create Post objects using both default and parameterized constructors
     Post* post1 = new Post();                 // Default constructor
     Post* post2 = new Post("Alice", "Hello, world!"); // Parameterized constructor
@@ -144,17 +183,19 @@ int main() {
     Message* msg1 = new Message("Alice", "Bob", "Hi Bob!");
     msg1->displayMessage();
 
-    // Edit and display the message
-    msg1->editMessage("Hello Bob!");
-    msg1->displayMessage();
+    // Create a comment (Multiple Inheritance: Post + Message)
+    Comment* comment = new Comment("Alice", "Great post!", "Bob", "Alice", "Thanks, Alice!");
+    comment->displayComment();
 
     // Cleanup: delete dynamically allocated objects
     for (auto user : users) {
         delete user;
     }
+    delete admin;
     delete post1;
     delete post2;
     delete msg1;
+    delete comment;
 
     // After deletion, display the total number of users and posts again
     cout << "Total Users after deletion: " << User::getUserCount() << "\n";
