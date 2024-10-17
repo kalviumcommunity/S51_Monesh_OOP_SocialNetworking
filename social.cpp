@@ -4,8 +4,9 @@
 
 using namespace std;
 
+// Abstract class User with a virtual function
 class User {
-private:
+protected:
     string name;
     string email;
     vector<string> friends;
@@ -24,7 +25,8 @@ public:
         userCount++;
     }
 
-    ~User() {
+    // Virtual destructor (important for abstract base classes)
+    virtual ~User() {
         userCount--; // Decrement the user count when a user is deleted
     }
 
@@ -32,19 +34,8 @@ public:
         this->friends.push_back(friendName);
     }
 
-    // Overloaded function to display profile
-    void displayProfile() const {
-        cout << "Name: " << this->name << "\nEmail: " << this->email << "\nFriends: ";
-        for (const auto& f : friends) {
-            cout << f << " ";
-        }
-        cout << "\n";
-    }
-
-    // Overloaded function with one argument to display specific friend details
-    void displayProfile(const string& friendName) const {
-        cout << "User: " << this->name << " has friend: " << friendName << "\n";
-    }
+    // Pure virtual function (this makes the User class abstract)
+    virtual void displayProfile() const = 0;
 
     // Static method to get the total number of users
     static int getUserCount() {
@@ -68,14 +59,39 @@ private:
 public:
     AdminUser(const string& n, const string& e, const string& role) : User(n, e), adminRole(role) {}
 
+    // Override the virtual function from the User class
+    void displayProfile() const override {
+        cout << "Admin Profile\n";
+        cout << "Name: " << name << "\nEmail: " << email << "\nRole: " << adminRole << "\n";
+        cout << "Friends: ";
+        for (const auto& f : friends) {
+            cout << f << " ";
+        }
+        cout << "\n";
+    }
+
     void displayAdminProfile() const {
-        // Call base class method to display the common user profile details
-        displayProfile();
-        // Add admin-specific details
-        cout << "Role: " << adminRole << "\n";
+        displayProfile(); // Calls the overridden method
     }
 };
 
+// RegularUser class inherits from User and implements the displayProfile method
+class RegularUser : public User {
+public:
+    RegularUser(const string& n, const string& e) : User(n, e) {}
+
+    // Override the virtual function from the User class
+    void displayProfile() const override {
+        cout << "Regular User Profile\n";
+        cout << "Name: " << name << "\nEmail: " << email << "\nFriends: ";
+        for (const auto& f : friends) {
+            cout << f << " ";
+        }
+        cout << "\n";
+    }
+};
+
+// Post class
 class Post {
 private:
     string user;
@@ -117,94 +133,39 @@ public:
 // Initialize static variable
 int Post::postCount = 0;
 
-class Message {
-private:
-    string sender;
-    string receiver;
-    string content;
-
-public:
-    // Parameterized constructor
-    Message(const string& s, const string& r, const string& c) : sender(s), receiver(r), content(c) {}
-
-    void displayMessage() const {
-        cout << "From: " << this->sender << "\nTo: " << this->receiver << "\nMessage: " << this->content << "\n";
-    }
-    
-    void editMessage(const string& newContent) {
-        this->content = newContent;
-    }
-};
-
-// Multiple Inheritance: Comment class inherits from both Post and Message
-class Comment : public Post, public Message {
-public:
-    // Constructor to initialize both base classes
-    Comment(const string& u, const string& c, const string& s, const string& r, const string& m)
-        : Post(u, c), Message(s, r, m) {}
-
-    // Display details of both post and message
-    void displayComment() const {
-        displayPost();      // Call Post's display method
-        displayMessage();   // Call Message's display method
-    }
-};
-
 int main() {
-    // Create User objects using both default and parameterized constructors
-    vector<User*> users = {
-        new User(),                    // Default constructor
-        new User("Alice", "alice@example.com")  // Parameterized constructor
-    };
+    // Create RegularUser and AdminUser objects
+    RegularUser* user1 = new RegularUser("Alice", "alice@example.com");
+    AdminUser* admin1 = new AdminUser("Bob", "bob@admin.com", "Super Admin");
 
     // Add friends
-    users[0]->addFriend("Bob");
-    users[1]->addFriend("Charlie");
+    user1->addFriend("Charlie");
+    admin1->addFriend("Alice");
 
     // Display profiles
-    for (auto user : users) {
-        user->displayProfile(); // Calls the regular displayProfile()
-    }
-
-    // Using the overloaded displayProfile() function
-    users[1]->displayProfile("Charlie"); // Calls the overloaded displayProfile() with a friend name
+    user1->displayProfile(); // Calls the overridden displayProfile for RegularUser
+    admin1->displayProfile(); // Calls the overridden displayProfile for AdminUser
 
     // Display the total number of users
     cout << "Total Users: " << User::getUserCount() << "\n";
 
-    // Create AdminUser
-    AdminUser* admin = new AdminUser("Charlie", "charlie@admin.com", "Super Admin");
-    admin->displayAdminProfile();
+    // Create Post objects
+    Post* post1 = new Post("Alice", "Hello, world!");
+    Post* post2 = new Post("Bob", "Admin post here!");
 
-    // Create Post objects using both default and parameterized constructors
-    Post* post1 = new Post();                 // Default constructor
-    Post* post2 = new Post("Alice", "Hello, world!"); // Parameterized constructor
-    post2->likePost();
-
-    // Display posts
+    // Like and display posts
+    post1->likePost();
     post1->displayPost();
     post2->displayPost();
 
     // Display the total number of posts
     cout << "Total Posts: " << Post::getPostCount() << "\n";
 
-    // Send a message using dynamic memory allocation
-    Message* msg1 = new Message("Alice", "Bob", "Hi Bob!");
-    msg1->displayMessage();
-
-    // Create a comment (Multiple Inheritance: Post + Message)
-    Comment* comment = new Comment("Alice", "Great post!", "Bob", "Alice", "Thanks, Alice!");
-    comment->displayComment();
-
-    // Cleanup: delete dynamically allocated objects
-    for (auto user : users) {
-        delete user;
-    }
-    delete admin;
+    // Cleanup
+    delete user1;
+    delete admin1;
     delete post1;
     delete post2;
-    delete msg1;
-    delete comment;
 
     // After deletion, display the total number of users and posts again
     cout << "Total Users after deletion: " << User::getUserCount() << "\n";
